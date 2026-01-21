@@ -33,8 +33,9 @@ jobs:
         working-directory: 00-bootstrap
         run: |
           cat > terraform.tfvars <<EOF
-          cloud_id  = "${YC_CLOUD_ID}"
-          folder_id = "${YC_FOLDER_ID}"
+          cloud_id     = "${YC_CLOUD_ID}"
+          folder_id    = "${YC_FOLDER_ID}"
+          bucket_name  = "${{ secrets.TF_STATE_BUCKET }}"
           EOF
 
       - name: Bootstrap | Init
