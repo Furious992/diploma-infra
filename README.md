@@ -15,3 +15,17 @@
 Связанные репозитории проекта:
 - Приложение и CI/CD: https://github.com/Furious992/diploma-app  
 - Kubernetes manifests и мониторинг: https://github.com/Furious992/diploma-k8s
+
+
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/version.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/ycinit.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/backendyes.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/applyter.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/publicip.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/preemtibletrue.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/creatingcluster.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/clusterinfo.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/clusterlist.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/nodes.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/pods.png)
+![](https://github.com/Furious992/diploma-infra/blob/main/screen/YCStructure.png)
