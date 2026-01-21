@@ -1,0 +1,37 @@
+name: Terraform Plan
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "10-main/**"
+      - "00-bootstrap/**"
+      - ".github/workflows/terraform-plan.yaml"
+  pull_request:
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 10-main
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.3
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init (no backend)
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan (no backend)
+        run: terraform plan -no-color
