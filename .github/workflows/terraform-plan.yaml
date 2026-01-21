@@ -1,21 +1,18 @@
-name: Terraform Plan
+name: Terraform CI (fmt/validate/plan)
 
 on:
   push:
     branches: ["main"]
-    paths:
-      - "10-main/**"
-      - "00-bootstrap/**"
-      - ".github/workflows/terraform-plan.yaml"
   pull_request:
 
 jobs:
-  plan:
+  terraform:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: 10-main
+    env:
+      YC_TOKEN: ${{ secrets.YC_TOKEN }}
+      YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+      YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
 
     steps:
       - name: Checkout
@@ -29,11 +26,52 @@ jobs:
       - name: Terraform fmt
         run: terraform fmt -check -recursive
 
-      - name: Terraform init (local backend for CI)
-        run: terraform init -reconfigure -backend=false -input=false
+      # -------------------------
+      # 00-bootstrap
+      # -------------------------
+      - name: Bootstrap | Prepare tfvars
+        working-directory: 00-bootstrap
+        run: |
+          cat > terraform.tfvars <<EOF
+          cloud_id  = "${YC_CLOUD_ID}"
+          folder_id = "${YC_FOLDER_ID}"
+          EOF
 
-      - name: Terraform validate
+      - name: Bootstrap | Init
+        working-directory: 00-bootstrap
+        run: terraform init -input=false
+
+      - name: Bootstrap | Validate
+        working-directory: 00-bootstrap
         run: terraform validate
 
-      - name: Terraform plan
+      - name: Bootstrap | Plan
+        working-directory: 00-bootstrap
+        run: terraform plan -no-color -input=false
+
+      # -------------------------
+      # 10-main
+      # -------------------------
+      - name: Main | Prepare tfvars
+        working-directory: 10-main
+        run: |
+          cat > terraform.tfvars <<EOF
+          cloud_id  = "${YC_CLOUD_ID}"
+          folder_id = "${YC_FOLDER_ID}"
+          EOF
+
+      - name: Main | Init (S3 backend)
+        working-directory: 10-main
+        run: |
+          terraform init -reconfigure -input=false \
+            -backend-config=backend.hcl \
+            -backend-config="access_key=${{ secrets.TF_STATE_ACCESS_KEY }}" \
+            -backend-config="secret_key=${{ secrets.TF_STATE_SECRET_KEY }}"
+
+      - name: Main | Validate
+        working-directory: 10-main
+        run: terraform validate
+
+      - name: Main | Plan
+        working-directory: 10-main
         run: terraform plan -no-color -input=false
