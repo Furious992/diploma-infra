@@ -1,18 +1,17 @@
-# Diploma Infra (Yandex Cloud + Terraform)
+# Diploma Infrastructure Перцев Максим Андреевич
 
-Репозиторий содержит Terraform-конфигурации для дипломного практикума.
+В этом репозитории находится инфраструктурная часть дипломного проекта.
 
-## Структура
-- `00-bootstrap/` — создание service account и S3 bucket для backend (terraform state)
-- `10-main/` — основная инфраструктура: VPC, подсети в 3 зонах, Managed Kubernetes, node group
+Здесь с помощью Terraform была создана облачная инфраструктура в Yandex Cloud, включающая:
+- сервисный аккаунт и Object Storage для хранения terraform state,
+- виртуальную сеть и подсети в разных зонах доступности,
+- managed Kubernetes кластер,
+- группу рабочих нод.
 
-## Требования
-- Terraform
-- yc CLI (авторизация выполнена через `yc init`)
+Инфраструктура полностью управляется через Terraform и может быть пересоздана без ручных действий.
 
-## Запуск
-### 1) Bootstrap
-```bash
-cd 00-bootstrap
-terraform init
-terraform apply
+Дополнительно для Terraform настроен CI pipeline в GitHub Actions, который автоматически проверяет конфигурацию (fmt, validate, plan).
+
+Связанные репозитории проекта:
+- Приложение и CI/CD: https://github.com/Furious992/diploma-app  
+- Kubernetes manifests и мониторинг: https://github.com/Furious992/diploma-k8s
