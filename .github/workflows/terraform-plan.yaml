@@ -12,12 +12,14 @@ on:
 jobs:
   plan:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: 10-main
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -27,11 +29,11 @@ jobs:
       - name: Terraform fmt
         run: terraform fmt -check -recursive
 
-      - name: Terraform init (no backend)
-        run: terraform init -backend=false
+      - name: Terraform init (local backend for CI)
+        run: terraform init -reconfigure -backend=false -input=false
 
       - name: Terraform validate
         run: terraform validate
 
-      - name: Terraform plan (no backend)
-        run: terraform plan -no-color
+      - name: Terraform plan
+        run: terraform plan -no-color -input=false
