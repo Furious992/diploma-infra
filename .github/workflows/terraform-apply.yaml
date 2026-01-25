@@ -1,0 +1,46 @@
+name: Terraform Apply (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    env:
+      YC_TOKEN: ${{ secrets.YC_TOKEN }}
+      YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+      YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.3
+
+      - name: Prepare tfvars (10-main)
+        working-directory: 10-main
+        run: |
+          cat > terraform.tfvars <<EOF
+          cloud_id  = "${YC_CLOUD_ID}"
+          folder_id = "${YC_FOLDER_ID}"
+          EOF
+
+      - name: Terraform init (S3 backend)
+        working-directory: 10-main
+        run: |
+          terraform init -reconfigure -input=false \
+            -backend-config=backend.hcl \
+            -backend-config="access_key=${{ secrets.TF_STATE_ACCESS_KEY }}" \
+            -backend-config="secret_key=${{ secrets.TF_STATE_SECRET_KEY }}"
+
+      - name: Terraform plan
+        working-directory: 10-main
+        run: terraform plan -no-color -input=false
+
+      - name: Terraform apply
+        working-directory: 10-main
+        run: terraform apply -auto-approve -input=false
